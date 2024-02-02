@@ -3,6 +3,10 @@ import { useEffect, useState } from 'react';
 export function CardBoard() {
     const [cardData, setCardData] = useState([]);
 
+    function shuffleCard(cards) {
+        return cards.sort(() => Math.random() - 0.5);
+    }
+
     useEffect(() => {
         async function fetchData(id) {
             const response = await fetch(
@@ -25,23 +29,49 @@ export function CardBoard() {
             return data;
         }
 
-        fetchAll(21).then((data) => setCardData(data));
+        fetchAll(21).then((data) => {
+            setCardData(
+                data.map((item) => {
+                    return { ...item, isClick: false };
+                }),
+            );
+        });
     }, []);
 
-    const listCards = cardData.map((card) => (
-        <div key={card.id}>
-            <img
-                style={{ width: '200px', height: '200px' }}
-                src={`/img/${card.id}.jpg`}
-                alt={`${card.alias || card.name}-image`}
-            ></img>
-            <p>{card.alias || card.name}</p>
-        </div>
-    ));
+    function handleChoosenCard(cardId) {
+        setCardData(
+            shuffleCard([...cardData]).map((card) => {
+                if (card.id === cardId) {
+                    return { ...card, isClick: true };
+                } else {
+                    return card;
+                }
+            }),
+        );
+    }
+
+    const listCards = cardData.map((card, index) => {
+        if (index <= 9) {
+            return (
+                <div
+                    key={card.id}
+                    onClick={() => handleChoosenCard(card.id)}
+                    style={{ backgroundColor: !card.isClick ? 'pink' : 'green' }}
+                >
+                    <img
+                        style={{ width: '200px', height: '200px' }}
+                        src={`/img/${card.id}.jpg`}
+                        alt={`${card.alias || card.name}-image`}
+                    ></img>
+                    <p>{card.alias || card.name}</p>
+                </div>
+            );
+        }
+    });
 
     return (
         <>
-            <div>{listCards}</div>
+            <div className='grid-container'>{listCards}</div>
         </>
     );
 }
