@@ -4,3 +4,20 @@
     padding: 2rem;
     text-align: center;
 }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+.grid-container > div {
+    background-color: #6b6d76;
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.grid-container > div > img {
+    border-radius: 8px;
+}
