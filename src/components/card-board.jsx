@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export function CardBoard() {
+export function CardBoard({ addCurtScore, resetScore }) {
     const [cardData, setCardData] = useState([]);
 
     function shuffleCard(cards) {
@@ -38,9 +38,22 @@ export function CardBoard() {
         });
     }, []);
 
-    function handleChoosenCard(cardId) {
+    function handleChoosenCard(cardId, cardIsClick) {
+        const newCards = shuffleCard([...cardData]);
+        if (cardIsClick) {
+            resetScore();
+            return setCardData(
+                newCards.map((card) => {
+                    return {
+                        ...card,
+                        isClick: false,
+                    };
+                }),
+            );
+        }
+        addCurtScore();
         setCardData(
-            shuffleCard([...cardData]).map((card) => {
+            newCards.map((card) => {
                 if (card.id === cardId) {
                     return { ...card, isClick: true };
                 } else {
@@ -50,12 +63,12 @@ export function CardBoard() {
         );
     }
 
-    const listCards = cardData.map((card, index) => {
-        if (index <= 9) {
+    const renderCards = (cards) => {
+        return cards.map((card) => {
             return (
                 <div
                     key={card.id}
-                    onClick={() => handleChoosenCard(card.id)}
+                    onClick={() => handleChoosenCard(card.id, card.isClick)}
                     style={{ backgroundColor: !card.isClick ? 'pink' : 'green' }}
                 >
                     <img
@@ -66,12 +79,33 @@ export function CardBoard() {
                     <p>{card.alias || card.name}</p>
                 </div>
             );
+        });
+    };
+
+    const listCards = () => {
+        const allCards = [...cardData];
+        const choosenRenderCards = allCards.slice(0, 10);
+
+        // For the first render, when none of the cards have been clicked yet, and when all cards have already been clicked.
+        const allCardsIsClick = allCards.every((card) => card.isClick);
+        const allCardsIsNotClick = allCards.every((card) => !card.isClick);
+        if (allCardsIsClick || allCardsIsNotClick) {
+            return renderCards(choosenRenderCards);
         }
-    });
+
+        // Check whether the choosen render cards have isClick & !isClick, if not, reshuffle all cards and reset the state.
+        const hasClickCards = choosenRenderCards.some((card) => card.isClick);
+        const hasUnclickCards = choosenRenderCards.some((card) => !card.isClick);
+        if (hasClickCards & hasUnclickCards) {
+            return renderCards(choosenRenderCards);
+        }
+
+        return setCardData(shuffleCard(allCards));
+    };
 
     return (
         <>
-            <div className='grid-container'>{listCards}</div>
+            <div className='grid-container'>{listCards()}</div>
         </>
     );
 }
