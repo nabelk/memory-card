@@ -40,8 +40,10 @@ export function CardBoard({ addCurtScore, resetScore }) {
 
     function handleChoosenCard(cardId, cardIsClick) {
         const newCards = shuffleCard([...cardData]);
-        if (cardIsClick) {
-            resetScore();
+        const isLastUnclickCard = newCards.filter((card) => !card.isClick).length === 1;
+
+        if (cardIsClick || isLastUnclickCard) {
+            resetScore(isLastUnclickCard);
             return setCardData(
                 newCards.map((card) => {
                     return {
@@ -66,17 +68,14 @@ export function CardBoard({ addCurtScore, resetScore }) {
     const renderCards = (cards) => {
         return cards.map((card) => {
             return (
-                <div
-                    key={card.id}
-                    onClick={() => handleChoosenCard(card.id, card.isClick)}
-                    style={{ backgroundColor: !card.isClick ? 'pink' : 'green' }}
-                >
-                    <img
-                        style={{ width: '200px', height: '200px' }}
-                        src={`/img/${card.id}.jpg`}
-                        alt={`${card.alias || card.name}-image`}
-                    ></img>
-                    <p>{card.alias || card.name}</p>
+                <div key={card.id} onClick={() => handleChoosenCard(card.id, card.isClick)}>
+                    <div>
+                        <img
+                            src={`/img/${card.id}.jpg`}
+                            alt={`${card.alias || card.name}-image`}
+                        ></img>
+                        <h3>{card.alias || card.name}</h3>
+                    </div>
                 </div>
             );
         });

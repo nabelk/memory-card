@@ -22,7 +22,7 @@ export function App() {
             }),
         );
     }
-    function setBestAndResetCurrentScore() {
+    function setBestAndResetCurrentScore(isLastCard) {
         let bestScore = 0;
         setScores(
             [...scores].map((item) => {
@@ -33,7 +33,7 @@ export function App() {
                         score: 0,
                     };
                 }
-                return { ...item, score: bestScore };
+                return { ...item, score: isLastCard ? bestScore + 1 : bestScore };
             }),
         );
     }
