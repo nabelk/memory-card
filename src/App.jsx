@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './App.css';
-import { ScoreBoard } from './components/scoreboard';
 import { CardBoard } from './components/card-board';
+import { Header } from './components/header';
 
 export function App() {
     const [scores, setScores] = useState([
@@ -40,7 +40,7 @@ export function App() {
 
     return (
         <>
-            <ScoreBoard scores={scores}></ScoreBoard>
+            <Header scores={scores}></Header>
             <CardBoard
                 addCurtScore={handleAddScore}
                 resetScore={setBestAndResetCurrentScore}
