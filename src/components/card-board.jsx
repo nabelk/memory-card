@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { fetchAll } from '../api/api';
 
 export function CardBoard({ addCurtScore, resetScore }) {
     const [cardData, setCardData] = useState([]);
@@ -8,27 +9,6 @@ export function CardBoard({ addCurtScore, resetScore }) {
     }
 
     useEffect(() => {
-        async function fetchData(id) {
-            const response = await fetch(
-                `https://project-heist-rahulv07.vercel.app/characters/${id}`,
-                {
-                    mode: 'cors',
-                },
-            );
-            const characterData = await response.json();
-            return characterData;
-        }
-
-        async function fetchAll(maxId) {
-            const promises = [];
-            for (let i = 1; i <= maxId; i++) {
-                promises.push(fetchData(i));
-            }
-            const data = await Promise.all(promises);
-            if (data.length !== maxId) return fetchAll(maxId);
-            return data;
-        }
-
         fetchAll(21).then((data) => {
             setCardData(
                 data.map((item) => {
